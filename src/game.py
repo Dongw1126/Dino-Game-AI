@@ -338,6 +338,7 @@ def introscreen():
 
 def gameplay():
     global high_score
+    
     gamespeed = 4
     startMenu = False
     gameOver = False
@@ -504,4 +505,4 @@ def main():
     if not isGameQuit:
         gameplay()
 
-main()
+#main()
