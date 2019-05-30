@@ -337,13 +337,16 @@ def introscreen():
             gameStart = True
 
 def gameplay():
+    import ai
     global high_score
-    
+
     gamespeed = 4
     startMenu = False
     gameOver = False
     gameQuit = False
-    playerDino = Dino(44,47)
+    #playerDino = Dino(44,47)
+    i = ai.Instance()
+    playerDino = i.dino
     new_ground = Ground(-1*gamespeed)
     scb = Scoreboard()
     highsc = Scoreboard(width*0.78)
@@ -438,6 +441,7 @@ def gameplay():
             pteras.update()
             clouds.update()
             new_ground.update()
+            i.get_enemy_pos(cacti, pteras)
             scb.update(playerDino.score)
             highsc.update(high_score)
 
