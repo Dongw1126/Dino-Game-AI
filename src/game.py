@@ -441,7 +441,7 @@ def gameplay():
             pteras.update()
             clouds.update()
             new_ground.update()
-            i.get_enemy_pos(cacti, pteras)
+            i.forward(cacti, pteras)
             scb.update(playerDino.score)
             highsc.update(high_score)
 
