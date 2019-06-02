@@ -19,6 +19,11 @@ black = (0,0,0)
 white = (255,255,255)
 background_col = (235,235,235)
 
+JUMP = 0
+DUCK_DOWN = 1
+DUCK_UP = 2
+STAY = 3
+
 high_score = 0
 
 screen = pygame.display.set_mode(scr_size)
@@ -344,9 +349,11 @@ def gameplay():
     startMenu = False
     gameOver = False
     gameQuit = False
+    
     #playerDino = Dino(44,47)
     i = ai.Instance()
     playerDino = i.dino
+    
     new_ground = Ground(-1*gamespeed)
     scb = Scoreboard()
     highsc = Scoreboard(width*0.78)
@@ -388,7 +395,7 @@ def gameplay():
                         gameQuit = True
                         gameOver = True
 
-                    if event.type == pygame.KEYDOWN:
+                '''if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_SPACE:
                             if playerDino.rect.bottom == int(0.98*height):
                                 playerDino.isJumping = True
@@ -402,7 +409,27 @@ def gameplay():
 
                     if event.type == pygame.KEYUP:
                         if event.key == pygame.K_DOWN:
-                            playerDino.isDucking = False
+                            playerDino.isDucking = False'''
+                    
+                if i.action == 0:
+                    if playerDino.rect.bottom == int(0.98*height):
+                        playerDino.isJumping = True
+                        if pygame.mixer.get_init() != None:
+                            jump_sound.play()
+                        playerDino.movement[1] = -1*playerDino.jumpSpeed
+                    
+                elif i.action == 1:
+                    if not (playerDino.isJumping and playerDino.isDead):
+                        playerDino.isDucking = True
+                        
+                elif i.action == 2:
+                    playerDino.isDucking = False
+                        
+                elif i.action == 3:
+                    pass
+                else:
+                    pass
+                    
             for c in cacti:
                 c.movement[0] = -1*gamespeed
                 if pygame.sprite.collide_mask(playerDino,c):
@@ -441,7 +468,9 @@ def gameplay():
             pteras.update()
             clouds.update()
             new_ground.update()
+            
             i.forward(cacti, pteras)
+            
             scb.update(playerDino.score)
             highsc.update(high_score)
 
@@ -489,9 +518,11 @@ def gameplay():
                             gameQuit = True
                             gameOver = False
 
-                        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                        '''if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                             gameOver = False
-                            gameplay()
+                            gameplay()'''
+                gameOver = False
+                gameplay()
             highsc.update(high_score)
             if pygame.display.get_surface() != None:
                 disp_gameOver_msg(retbutton_image,gameover_image)

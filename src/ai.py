@@ -5,6 +5,11 @@ from game import Dino
 
 RAND_INIT = 5
 
+def max_index(arr):
+    v = np.argmax(arr)
+    return v
+        
+
 def rand():
     return random.uniform(-RAND_INIT, RAND_INIT)
 
@@ -24,21 +29,23 @@ class Instance:
         self.dino = Dino(44,47)
         self.init_network()
         self.X = np.array([1.0, 1.0, 1.0, 1.0])
+        self.action = 3
 
     def init_network(self):
+        # TODO : find the appropriate number of nodes
         self.W1 = np.zeros((4, 3))
         self.W2 = np.zeros((3, 3))
-        self.W3 = np.zeros((3 ,3))
+        self.W3 = np.zeros((3 ,4))
         np_rand(self.W1, 4, 3)
         np_rand(self.W2, 3, 3)
-        np_rand(self.W3, 3, 3)
+        np_rand(self.W3, 3, 4)
 
         self.b1 = np.zeros((1, 3))
         self.b2 = np.zeros((1, 3))
-        self.b3 = np.zeros((1, 3))
+        self.b3 = np.zeros((1, 4))
         np_rand(self.b1, 1, 3)
         np_rand(self.b2, 1, 3)
-        np_rand(self.b3, 1, 3)
+        np_rand(self.b3, 1, 4)
 
     def get_enemy_pos(self, cacti, ptreas):
         front_c = pg.Rect(600, 100, 40, 40)
@@ -62,10 +69,8 @@ class Instance:
         z2 = ReLU(a2)
         a3 = np.dot(z2, self.W3) + self.b3
         y = identity_function(a3)
-            
-        print(y)
-        # return JUMP 0, DUCK 1, STAY 2
-        # in accordance with y values
+
+        self.action = np.argmax(y)
         
 
 class Generation:
