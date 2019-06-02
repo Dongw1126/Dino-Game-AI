@@ -85,12 +85,36 @@ class Generation:
             self.instance.append(Instance())
 
     def generation_end(self):
-        for i in range(self.num):
+        for i in range(len(self.instance)):
             if self.instance[i].dino.isDead == False:
                 return False
         return True
 
     def save_score(self):
         self.gene_score = []
-        for i in range(self.num):
+        for i in range(len(self.instance)):
             self.gene_score.append(self.instance[i].dino.score)
+
+    def selection(self):
+        for i in range(int(len(self.instance) * 0.4)):
+            index = self.gene_score.index(max(self.gene_score))
+            self.new_instance.append(self.instance[index])
+            del self.instance[index]
+        # Issue : list range out error
+
+        print(self.new_instance)
+
+    def cross_over(self):
+        pass
+
+    def mutation(self):
+        pass
+
+    def new_generation(self):
+        self.generation += 1
+        self.new_instance = []
+        self.save_score()
+        
+        self.selection()
+        self.cross_over()
+        self.mutation()

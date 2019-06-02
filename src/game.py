@@ -494,7 +494,7 @@ def gameplay():
 
             for i in range(G_NUM):
                 if g.generation_end():
-                    g.save_score()
+                    g.new_generation()
                     gameOver = True
                 if g.instance[i].dino.score > high_score:
                     high_score = g.instance[i].dino.score
@@ -527,9 +527,8 @@ def gameplay():
                             gameOver = False
                             gameplay()'''
                 ### Auto Restart
-                gameOver = False
-                gameplay()
-            print(g.gene_score)
+                #gameOver = False
+                #gameplay()
             highsc.update(high_score)
             if pygame.display.get_surface() != None:
                 disp_gameOver_msg(retbutton_image,gameover_image)
