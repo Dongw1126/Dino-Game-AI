@@ -100,8 +100,7 @@ class Generation:
             index = self.gene_score.index(max(self.gene_score))
             self.new_instance.append(self.instance[index])
             del self.instance[index]
-        # Issue : list range out error
-
+    
         print(self.new_instance)
 
     def cross_over(self):
@@ -114,7 +113,6 @@ class Generation:
         self.generation += 1
         self.new_instance = []
         self.save_score()
-        
         self.selection()
         self.cross_over()
         self.mutation()

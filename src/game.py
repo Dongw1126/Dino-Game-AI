@@ -493,11 +493,12 @@ def gameplay():
             clock.tick(FPS)
 
             for i in range(G_NUM):
-                if g.generation_end():
-                    g.new_generation()
-                    gameOver = True
                 if g.instance[i].dino.score > high_score:
                     high_score = g.instance[i].dino.score
+                    
+            if g.generation_end():
+                g.new_generation()
+                gameOver = True
 
             if counter%700 == 699:
                 new_ground.speed -= 1
