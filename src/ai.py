@@ -78,13 +78,19 @@ class Generation:
         self.generation = 1
         self.num = n
         self.instance = []
+        self.create_instance()
     
     def create_instance(self):
-        for i in range(num):
+        for i in range(self.num):
             self.instance.append(Instance())
 
     def generation_end(self):
-        for i in range(num):
-            if self.instance.isDead == False:
+        for i in range(self.num):
+            if self.instance[i].dino.isDead == False:
                 return False
         return True
+
+    def save_score(self):
+        self.gene_score = []
+        for i in range(self.num):
+            self.gene_score.append(self.instance[i].dino.score)

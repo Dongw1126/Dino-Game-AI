@@ -19,6 +19,7 @@ black = (0,0,0)
 white = (255,255,255)
 background_col = (235,235,235)
 
+G_NUM = 10
 JUMP = 0
 DUCK_DOWN = 1
 DUCK_UP = 2
@@ -29,10 +30,6 @@ high_score = 0
 screen = pygame.display.set_mode(scr_size)
 clock = pygame.time.Clock()
 pygame.display.set_caption("Dino Run ")
-
-jump_sound = pygame.mixer.Sound('sprites/jump.wav')
-die_sound = pygame.mixer.Sound('sprites/die.wav')
-checkPoint_sound = pygame.mixer.Sound('sprites/checkPoint.wav')
 
 def load_image(
     name,
@@ -184,9 +181,9 @@ class Dino():
 
         if not self.isDead and self.counter % 7 == 6 and self.isBlinking == False:
             self.score += 1
-            if self.score % 100 == 0 and self.score != 0:
+            '''if self.score % 100 == 0 and self.score != 0:
                 if pygame.mixer.get_init() != None:
-                    checkPoint_sound.play()
+                    checkPoint_sound.play()'''
 
         self.counter = (self.counter + 1)
 
@@ -351,6 +348,9 @@ def gameplay():
     gameQuit = False
     
     #playerDino = Dino(44,47)
+    
+    # Generation Create
+    g = ai.Generation(G_NUM)
     i = ai.Instance()
     playerDino = i.dino
     
@@ -410,39 +410,36 @@ def gameplay():
                     if event.type == pygame.KEYUP:
                         if event.key == pygame.K_DOWN:
                             playerDino.isDucking = False'''
+                # Generation event
+                for i in range(G_NUM):
+                    if g.instance[i].action == 0:
+                        if g.instance[i].dino.rect.bottom == int(0.98*height):
+                            g.instance[i].dino.isJumping = True
+                            g.instance[i].dino.movement[1] = -1*g.instance[i].dino.jumpSpeed
                     
-                if i.action == 0:
-                    if playerDino.rect.bottom == int(0.98*height):
-                        playerDino.isJumping = True
-                        if pygame.mixer.get_init() != None:
-                            jump_sound.play()
-                        playerDino.movement[1] = -1*playerDino.jumpSpeed
-                    
-                elif i.action == 1:
-                    if not (playerDino.isJumping and playerDino.isDead):
-                        playerDino.isDucking = True
+                    elif g.instance[i].action == 1:
+                        if not (g.instance[i].dino.isJumping and g.instance[i].dino.isDead):
+                            g.instance[i].dino.isDucking = True
                         
-                elif i.action == 2:
-                    playerDino.isDucking = False
+                    elif g.instance[i].action == 2:
+                        g.instance[i].dino.isDucking = False
                         
-                elif i.action == 3:
-                    pass
-                else:
-                    pass
+                    elif g.instance[i].action == 3:
+                        pass
+                    else:
+                        pass
                     
             for c in cacti:
                 c.movement[0] = -1*gamespeed
-                if pygame.sprite.collide_mask(playerDino,c):
-                    playerDino.isDead = True
-                    if pygame.mixer.get_init() != None:
-                        die_sound.play()
+                for i in range(G_NUM):
+                    if pygame.sprite.collide_mask(g.instance[i].dino,c):
+                        g.instance[i].dino.isDead = True
 
             for p in pteras:
                 p.movement[0] = -1*gamespeed
-                if pygame.sprite.collide_mask(playerDino,p):
-                    playerDino.isDead = True
-                    if pygame.mixer.get_init() != None:
-                        die_sound.play()
+                for i in range(G_NUM):
+                    if pygame.sprite.collide_mask(g.instance[i].dino,p):
+                        g.instance[i].dino.isDead = True
 
             if len(cacti) < 2:
                 if len(cacti) == 0:
@@ -463,15 +460,19 @@ def gameplay():
             if len(clouds) < 5 and random.randrange(0,300) == 10:
                 Cloud(width,random.randrange(height/5,height/2))
 
-            playerDino.update()
+            for i in range(G_NUM):
+                g.instance[i].dino.update()
             cacti.update()
             pteras.update()
             clouds.update()
             new_ground.update()
-            
-            i.forward(cacti, pteras)
-            
-            scb.update(playerDino.score)
+
+            # Neural network working
+            for i in range(G_NUM):
+                g.instance[i].forward(cacti, pteras)
+
+            for i in range(G_NUM):
+                scb.update(g.instance[i].dino.score)
             highsc.update(high_score)
 
             if pygame.display.get_surface() != None:
@@ -484,15 +485,19 @@ def gameplay():
                     screen.blit(HI_image,HI_rect)
                 cacti.draw(screen)
                 pteras.draw(screen)
-                playerDino.draw()
+                for i in range(G_NUM):
+                    if not g.instance[i].dino.isDead:
+                        g.instance[i].dino.draw()
 
                 pygame.display.update()
             clock.tick(FPS)
 
-            if playerDino.isDead:
-                gameOver = True
-                if playerDino.score > high_score:
-                    high_score = playerDino.score
+            for i in range(G_NUM):
+                if g.generation_end():
+                    g.save_score()
+                    gameOver = True
+                if g.instance[i].dino.score > high_score:
+                    high_score = g.instance[i].dino.score
 
             if counter%700 == 699:
                 new_ground.speed -= 1
@@ -521,8 +526,10 @@ def gameplay():
                         '''if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                             gameOver = False
                             gameplay()'''
+                ### Auto Restart
                 gameOver = False
                 gameplay()
+            print(g.gene_score)
             highsc.update(high_score)
             if pygame.display.get_surface() != None:
                 disp_gameOver_msg(retbutton_image,gameover_image)
