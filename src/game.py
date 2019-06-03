@@ -12,14 +12,14 @@ from pygame import *
 pygame.init()
 
 scr_size = (width,height) = (600,150)
-FPS = 60
+FPS = 600
 gravity = 0.6
 
 black = (0,0,0)
 white = (255,255,255)
 background_col = (235,235,235)
 
-G_NUM = 10
+G_NUM = 100
 JUMP = 0
 DUCK_DOWN = 1
 DUCK_UP = 2
@@ -338,10 +338,17 @@ def introscreen():
         if temp_dino.isJumping == False and temp_dino.isBlinking == False:
             gameStart = True
 
+# Generation Create
+import ai
+g = ai.Generation(G_NUM)
+
 def gameplay():
     import ai
     global high_score
-
+    global g
+    g.info()
+    learning = True
+    
     gamespeed = 4
     startMenu = False
     gameOver = False
@@ -350,9 +357,9 @@ def gameplay():
     #playerDino = Dino(44,47)
     
     # Generation Create
-    g = ai.Generation(G_NUM)
-    i = ai.Instance()
-    playerDino = i.dino
+    #g = ai.Generation(G_NUM)
+    #i = ai.Instance()
+    #playerDino = i.dino
     
     new_ground = Ground(-1*gamespeed)
     scb = Scoreboard()
@@ -394,6 +401,11 @@ def gameplay():
                     if event.type == pygame.QUIT:
                         gameQuit = True
                         gameOver = True
+
+                    # Stop Learning
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_SPACE:
+                            learning = False
 
                 '''if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_SPACE:
@@ -495,7 +507,7 @@ def gameplay():
             for i in range(G_NUM):
                 if g.instance[i].dino.score > high_score:
                     high_score = g.instance[i].dino.score
-                    
+
             if g.generation_end():
                 g.new_generation()
                 gameOver = True
@@ -528,8 +540,10 @@ def gameplay():
                             gameOver = False
                             gameplay()'''
                 ### Auto Restart
-                #gameOver = False
-                #gameplay()
+                if learning:
+                    gameOver = False
+                    gameplay()
+                    
             highsc.update(high_score)
             if pygame.display.get_surface() != None:
                 disp_gameOver_msg(retbutton_image,gameover_image)

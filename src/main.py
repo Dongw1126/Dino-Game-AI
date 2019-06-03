@@ -6,7 +6,6 @@ game.main()
 '''
 
 ## TODO ##
-simulate many dino at once
-implement genetic algorithm
+save generation class
 
 '''

@@ -1,14 +1,10 @@
 import numpy as np
 import pygame as pg
 import random
+import copy
 from game import Dino
 
 RAND_INIT = 5
-
-def max_index(arr):
-    v = np.argmax(arr)
-    return v
-        
 
 def rand():
     return random.uniform(-RAND_INIT, RAND_INIT)
@@ -59,6 +55,14 @@ class Instance:
                 front_p = p.rect
                 
         self.X = np.array([front_c.x, front_c.y, front_p.x, front_p.y])
+
+    def print_network(self):
+        print(self.W1)
+        print(self.W2)
+        print(self.W3)
+        print(self.b1)
+        print(self.b2)
+        print(self.b3)
         
     def forward(self, c, p):
         self.get_enemy_pos(c, p)
@@ -71,6 +75,15 @@ class Instance:
         y = identity_function(a3)
 
         self.action = np.argmax(y)
+
+    def copy(self, new):
+        new.W1 = self.W1
+        new.W2 = self.W2
+        new.W3 = self.W3
+
+        new.b1 = self.b1
+        new.b2 = self.b2
+        new.b3 = self.b3
         
 
 class Generation:
@@ -78,6 +91,7 @@ class Generation:
         self.generation = 1
         self.num = n
         self.instance = []
+        self.gene_score = [0]
         self.create_instance()
     
     def create_instance(self):
@@ -85,29 +99,49 @@ class Generation:
             self.instance.append(Instance())
 
     def generation_end(self):
-        for i in range(len(self.instance)):
+        for i in range(self.num):
             if self.instance[i].dino.isDead == False:
                 return False
         return True
 
     def save_score(self):
         self.gene_score = []
-        for i in range(len(self.instance)):
+        for i in range(self.num):
             self.gene_score.append(self.instance[i].dino.score)
 
+    def info(self):
+        print(self.generation, end='')
+        print(" ", end='')
+        print(max(self.gene_score))
+
     def selection(self):
-        for i in range(int(len(self.instance) * 0.4)):
+        for i in range(int(self.num * 0.4)):
             index = self.gene_score.index(max(self.gene_score))
-            self.new_instance.append(self.instance[index])
+            tmp = Instance()
+            self.instance[index].copy(tmp)
+            self.new_instance.append(tmp)
+            
             del self.instance[index]
-    
-        print(self.new_instance)
+            del self.gene_score[index]
 
     def cross_over(self):
-        pass
+        count = 0
+        for i in range(int(self.num * 0.2 / 2)):
+            tmp1 = Instance()
+            tmp2 = Instance()
+            self.new_instance[count].copy(tmp1)
+            self.new_instance[count + 1].copy(tmp2)
+
+            count += 2
+            
+            self.new_instance.append(tmp1)
+            self.new_instance.append(tmp2)
 
     def mutation(self):
-        pass
+        for i in range(int(self.num * 0.4)):
+            tmp = Instance()
+            self.new_instance.append(tmp)
+            
 
     def new_generation(self):
         self.generation += 1
@@ -116,3 +150,4 @@ class Generation:
         self.selection()
         self.cross_over()
         self.mutation()
+        self.instance = self.new_instance
