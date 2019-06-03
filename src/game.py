@@ -484,7 +484,8 @@ def gameplay():
                 g.instance[i].forward(cacti, pteras)
 
             for i in range(G_NUM):
-                scb.update(g.instance[i].dino.score)
+                if not g.instance[i].dino.isDead:
+                    scb.update(g.instance[i].dino.score)
             highsc.update(high_score)
 
             if pygame.display.get_surface() != None:
