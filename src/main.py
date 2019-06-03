@@ -6,6 +6,6 @@ game.main()
 '''
 
 ## TODO ##
-save generation class
+save generation class (using pickle module)
 
 '''

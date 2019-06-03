@@ -110,9 +110,12 @@ class Generation:
             self.gene_score.append(self.instance[i].dino.score)
 
     def info(self):
-        print(self.generation, end='')
-        print(" ", end='')
-        print(max(self.gene_score))
+        #print(self.generation, end='')
+        #print(" ", end='')
+        #print(max(self.gene_score))
+        print("=============="+ "Generation "+ str(self.generation) + "==============")
+        print("==========="+ "Best record "+ str(max(self.gene_score)) + "===========")
+        print()
 
     def selection(self):
         for i in range(int(self.num * 0.4)):
@@ -142,11 +145,11 @@ class Generation:
             tmp = Instance()
             self.new_instance.append(tmp)
             
-
     def new_generation(self):
+        self.save_score()
+        self.info()
         self.generation += 1
         self.new_instance = []
-        self.save_score()
         self.selection()
         self.cross_over()
         self.mutation()

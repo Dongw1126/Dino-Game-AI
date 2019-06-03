@@ -12,14 +12,14 @@ from pygame import *
 pygame.init()
 
 scr_size = (width,height) = (600,150)
-FPS = 600
+FPS = 120
 gravity = 0.6
 
 black = (0,0,0)
 white = (255,255,255)
 background_col = (235,235,235)
 
-G_NUM = 100
+G_NUM = 10
 JUMP = 0
 DUCK_DOWN = 1
 DUCK_UP = 2
@@ -181,9 +181,6 @@ class Dino():
 
         if not self.isDead and self.counter % 7 == 6 and self.isBlinking == False:
             self.score += 1
-            '''if self.score % 100 == 0 and self.score != 0:
-                if pygame.mixer.get_init() != None:
-                    checkPoint_sound.play()'''
 
         self.counter = (self.counter + 1)
 
@@ -346,20 +343,13 @@ def gameplay():
     import ai
     global high_score
     global g
-    g.info()
+
     learning = True
     
     gamespeed = 4
     startMenu = False
     gameOver = False
     gameQuit = False
-    
-    #playerDino = Dino(44,47)
-    
-    # Generation Create
-    #g = ai.Generation(G_NUM)
-    #i = ai.Instance()
-    #playerDino = i.dino
     
     new_ground = Ground(-1*gamespeed)
     scb = Scoreboard()
@@ -407,21 +397,6 @@ def gameplay():
                         if event.key == pygame.K_SPACE:
                             learning = False
 
-                '''if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_SPACE:
-                            if playerDino.rect.bottom == int(0.98*height):
-                                playerDino.isJumping = True
-                                if pygame.mixer.get_init() != None:
-                                    jump_sound.play()
-                                playerDino.movement[1] = -1*playerDino.jumpSpeed
-
-                        if event.key == pygame.K_DOWN:
-                            if not (playerDino.isJumping and playerDino.isDead):
-                                playerDino.isDucking = True
-
-                    if event.type == pygame.KEYUP:
-                        if event.key == pygame.K_DOWN:
-                            playerDino.isDucking = False'''
                 # Generation event
                 for i in range(G_NUM):
                     if g.instance[i].action == 0:
@@ -536,10 +511,6 @@ def gameplay():
                         if event.key == pygame.K_ESCAPE:
                             gameQuit = True
                             gameOver = False
-
-                        '''if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                            gameOver = False
-                            gameplay()'''
                 ### Auto Restart
                 if learning:
                     gameOver = False
