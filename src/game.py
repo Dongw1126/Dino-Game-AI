@@ -7,6 +7,7 @@ import os
 import sys
 import pygame
 import random
+import pickle
 from pygame import *
 
 pygame.init()
@@ -339,6 +340,12 @@ def introscreen():
 import ai
 g = ai.Generation(G_NUM)
 
+'''try:
+    with open("myClass.pickle", "rb") as r:
+        g = pickle.load(r)
+except Exception as e:
+    g = ai.Generation(G_NUM)'''
+
 def gameplay():
     import ai
     global high_score
@@ -485,6 +492,8 @@ def gameplay():
                     high_score = g.instance[i].dino.score
 
             if g.generation_end():
+                '''with open("data.pickle", "wb") as w:
+                    pickle.dump(g, w)'''
                 g.new_generation()
                 gameOver = True
 

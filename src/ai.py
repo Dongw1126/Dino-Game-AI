@@ -2,6 +2,7 @@ import numpy as np
 import pygame as pg
 import random
 import copy
+import pickle
 from game import Dino
 
 RAND_INIT = 5
@@ -21,8 +22,12 @@ def identity_function(x):
     return x
 
 class Instance:
-    def __init__(self):
-        self.dino = Dino(44,47)
+    def __init__(self, dino=None):
+        if dino == None:
+            self.dino = Dino(44,47)
+        else:
+            self.dino = dino
+        #Dino(44,47)
         self.init_network()
         self.X = np.array([1.0, 1.0, 1.0, 1.0])
         self.action = 3
@@ -43,6 +48,8 @@ class Instance:
         np_rand(self.b2, 1, 3)
         np_rand(self.b3, 1, 4)
 
+        self.network = [self.W1, self.W2, self.W3, self.b1, self.b2, self.b3]
+
     def get_enemy_pos(self, cacti, ptreas):
         front_c = pg.Rect(600, 100, 40, 40)
         for c in cacti:
@@ -57,12 +64,19 @@ class Instance:
         self.X = np.array([front_c.x, front_c.y, front_p.x, front_p.y])
 
     def print_network(self):
+        print("W1")
         print(self.W1)
+        print("W2")
         print(self.W2)
+        print("W3")
         print(self.W3)
+        print("b1")
         print(self.b1)
+        print("b2")
         print(self.b2)
+        print("b3")
         print(self.b3)
+        print()
         
     def forward(self, c, p):
         self.get_enemy_pos(c, p)
@@ -77,13 +91,15 @@ class Instance:
         self.action = np.argmax(y)
 
     def copy(self, new):
-        new.W1 = self.W1
-        new.W2 = self.W2
-        new.W3 = self.W3
+        new.W1 = copy.deepcopy(self.W1)
+        new.W2 = copy.deepcopy(self.W2)
+        new.W3 = copy.deepcopy(self.W3)
 
-        new.b1 = self.b1
-        new.b2 = self.b2
-        new.b3 = self.b3
+        new.b1 = copy.deepcopy(self.b1)
+        new.b2 = copy.deepcopy(self.b2)
+        new.b3 = copy.deepcopy(self.b3)
+
+        self.network = [self.W1, self.W2, self.W3, self.b1, self.b2, self.b3]
         
 
 class Generation:
@@ -110,9 +126,6 @@ class Generation:
             self.gene_score.append(self.instance[i].dino.score)
 
     def info(self):
-        #print(self.generation, end='')
-        #print(" ", end='')
-        #print(max(self.gene_score))
         print("=============="+ "Generation "+ str(self.generation) + "==============")
         print("==========="+ "Best record "+ str(max(self.gene_score)) + "===========")
         print()
@@ -132,17 +145,33 @@ class Generation:
         for i in range(int(self.num * 0.2 / 2)):
             tmp1 = Instance()
             tmp2 = Instance()
+            tmp1.print_network()
             self.new_instance[count].copy(tmp1)
             self.new_instance[count + 1].copy(tmp2)
-
+            tmp1.print_network()
+            for i in range(3):
+                x = random.choice(tmp1.network)
+                y = random.choice(tmp2.network)
+                # swap
+                z = x
+                x = y
+                y = z
+                
             count += 2
-            
+            tmp1.print_network()
             self.new_instance.append(tmp1)
             self.new_instance.append(tmp2)
 
     def mutation(self):
+        count = 0
         for i in range(int(self.num * 0.4)):
             tmp = Instance()
+            self.new_instance[count].copy(tmp)
+            
+            for i in range(2):
+                index = random.randrange(0, len(tmp.network))
+                x = tmp.network[index]
+                np_rand(x, x.shape[0], x.shape[1])
             self.new_instance.append(tmp)
             
     def new_generation(self):
@@ -154,3 +183,12 @@ class Generation:
         self.cross_over()
         self.mutation()
         self.instance = self.new_instance
+
+class Save_Load:
+    def __init__(self, g):
+        self.g = g
+        self.instance = []
+        for i in range(g.num):
+            self.instance.append(Instance(-1))
+            
+        
