@@ -145,17 +145,18 @@ class Generation:
         for i in range(int(self.num * 0.2 / 2)):
             tmp1 = Instance()
             tmp2 = Instance()
-            tmp1.print_network()
+            
             self.new_instance[count].copy(tmp1)
             self.new_instance[count + 1].copy(tmp2)
             tmp1.print_network()
-            for i in range(3):
-                x = random.choice(tmp1.network)
-                y = random.choice(tmp2.network)
-                # swap
-                z = x
-                x = y
-                y = z
+            
+            for i in range(2):
+                index = random.randrange(0, len(tmp1.network))
+                x = tmp1.network[index]
+                y = tmp2.network[index]
+
+                tmp1.network[index] = copy.deepcopy(y)
+                tmp2.network[index] = copy.deepcopy(x)
                 
             count += 2
             tmp1.print_network()
