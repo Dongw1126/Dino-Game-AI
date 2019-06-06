@@ -22,12 +22,8 @@ def identity_function(x):
     return x
 
 class Instance:
-    def __init__(self, dino=None):
-        if dino == None:
-            self.dino = Dino(44,47)
-        else:
-            self.dino = dino
-        #Dino(44,47)
+    def __init__(self):
+        self.dino = Dino(44,47)
         self.init_network()
         self.X = np.array([1.0, 1.0, 1.0, 1.0])
         self.action = 3
@@ -127,8 +123,11 @@ class Generation:
             self.gene_score.append(self.instance[i].dino.score)
 
     def info(self):
-        print("=============="+ "Generation "+ str(self.generation) + "==============")
-        print("==========="+ "Best record "+ str(max(self.gene_score)) + "===========")
+        print()
+        print("============================================")
+        print("\t\tGeneration "+ str(self.generation))
+        print("\t\tBest record "+ str(max(self.gene_score)))
+        print("============================================")
         print()
 
     def selection(self):
@@ -184,11 +183,28 @@ class Generation:
         self.mutation()
         self.instance = self.new_instance
 
-class Save_Load:
-    def __init__(self, g):
-        self.g = g
+    def get_network_list(self):
+        ret = []
+        for i in range(len(self.instance)):
+            ret.append(self.instance[i].network)
+
+        return ret
+
+    def load_data(self, data):
+        self.generation = data.g
         self.instance = []
-        for i in range(g.num):
-            self.instance.append(Instance(-1))
+        for i in range(len(data.data)):
+            tmp = Instance()
+            tmp.network = data.data[i]
+            self.instance.append(tmp)
+
+
+class Data:
+    def __init__(self, g, data):
+        self.g = g
+        self.data = data
+        
+    
+            
             
         

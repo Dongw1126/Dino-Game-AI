@@ -340,11 +340,13 @@ def introscreen():
 import ai
 g = ai.Generation(G_NUM)
 
-'''try:
-    with open("myClass.pickle", "rb") as r:
-        g = pickle.load(r)
+try:
+    with open("data.pickle", "rb") as r:
+        data = pickle.load(r)
+        g.load_data(data)
+        
 except Exception as e:
-    g = ai.Generation(G_NUM)'''
+    print("Create new save file")
 
 def gameplay():
     import ai
@@ -352,7 +354,7 @@ def gameplay():
     global g
 
     learning = True
-    
+
     gamespeed = 4
     startMenu = False
     gameOver = False
@@ -492,9 +494,14 @@ def gameplay():
                     high_score = g.instance[i].dino.score
 
             if g.generation_end():
-                '''with open("data.pickle", "wb") as w:
-                    pickle.dump(g, w)'''
+                gene = g.generation
+                net = g.get_network_list()
+                data = ai.Data(gene, net)
+
+                with open("data.pickle", "wb") as w:
+                    pickle.dump(data, w)
                 g.new_generation()
+                
                 gameOver = True
 
             if counter%700 == 699:
@@ -520,10 +527,14 @@ def gameplay():
                         if event.key == pygame.K_ESCAPE:
                             gameQuit = True
                             gameOver = False
+                            
                 ### Auto Restart
                 if learning:
                     gameOver = False
                     gameplay()
+                else:
+                    print("Learning Finished")
+                    pygame.quit()
                     
             highsc.update(high_score)
             if pygame.display.get_surface() != None:
@@ -538,6 +549,13 @@ def gameplay():
     quit()
 
 def main():
+    print()
+    print("============================================")
+    print("\tPress Space to Learning")
+    print("If you press space again, it stops")
+    print("============================================")
+    print()
+    
     isGameQuit = introscreen()
     if not isGameQuit:
         gameplay()
