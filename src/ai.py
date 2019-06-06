@@ -155,12 +155,12 @@ class Generation:
         for i in range(int(self.num * 0.4)):
             tmp = Instance()
             self.new_instance[count].copy(tmp)
-            tmp.print_network()
+            
             for i in range(2):
                 key = random.choice(list(tmp.network.keys()))
                 x = tmp.network[key]
                 np_rand(x, x.shape[0], x.shape[1])
-            tmp.print_network()
+                
             self.new_instance.append(tmp)
             
     def new_generation(self):

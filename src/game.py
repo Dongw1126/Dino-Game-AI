@@ -13,7 +13,7 @@ from pygame import *
 pygame.init()
 
 scr_size = (width,height) = (600,150)
-FPS = 120
+FPS = 600
 gravity = 0.6
 
 black = (0,0,0)
