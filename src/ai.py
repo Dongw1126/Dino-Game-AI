@@ -34,21 +34,29 @@ class Instance:
 
     def init_network(self):
         # TODO : find the appropriate number of nodes
-        self.W1 = np.zeros((4, 3))
-        self.W2 = np.zeros((3, 3))
-        self.W3 = np.zeros((3 ,4))
-        np_rand(self.W1, 4, 3)
-        np_rand(self.W2, 3, 3)
-        np_rand(self.W3, 3, 4)
+        self.network = {}
+        
+        W1 = np.zeros((4, 3))
+        W2 = np.zeros((3, 3))
+        W3 = np.zeros((3 ,4))
+        np_rand(W1, 4, 3)
+        np_rand(W2, 3, 3)
+        np_rand(W3, 3, 4)
 
-        self.b1 = np.zeros((1, 3))
-        self.b2 = np.zeros((1, 3))
-        self.b3 = np.zeros((1, 4))
-        np_rand(self.b1, 1, 3)
-        np_rand(self.b2, 1, 3)
-        np_rand(self.b3, 1, 4)
+        b1 = np.zeros((1, 3))
+        b2 = np.zeros((1, 3))
+        b3 = np.zeros((1, 4))
+        np_rand(b1, 1, 3)
+        np_rand(b2, 1, 3)
+        np_rand(b3, 1, 4)
 
-        self.network = [self.W1, self.W2, self.W3, self.b1, self.b2, self.b3]
+        self.network['W1'] = W1
+        self.network['W2'] = W2
+        self.network['W3'] = W3
+        self.network['b1'] = b1
+        self.network['b2'] = b2
+        self.network['b3'] = b3
+        
 
     def get_enemy_pos(self, cacti, ptreas):
         front_c = pg.Rect(600, 100, 40, 40)
@@ -64,42 +72,24 @@ class Instance:
         self.X = np.array([front_c.x, front_c.y, front_p.x, front_p.y])
 
     def print_network(self):
-        print("W1")
-        print(self.W1)
-        print("W2")
-        print(self.W2)
-        print("W3")
-        print(self.W3)
-        print("b1")
-        print(self.b1)
-        print("b2")
-        print(self.b2)
-        print("b3")
-        print(self.b3)
+        for key in self.network.keys():
+            print(key, "\n", self.network[key])
         print()
         
     def forward(self, c, p):
         self.get_enemy_pos(c, p)
 
-        a1 = np.dot(self.X, self.W1) + self.b1
+        a1 = np.dot(self.X, self.network['W1']) + self.network['b1']
         z1 = ReLU(a1)
-        a2 = np.dot(z1, self.W2) + self.b2
+        a2 = np.dot(z1, self.network['W2']) + self.network['b2']
         z2 = ReLU(a2)
-        a3 = np.dot(z2, self.W3) + self.b3
+        a3 = np.dot(z2, self.network['W3']) + self.network['b3']
         y = identity_function(a3)
 
         self.action = np.argmax(y)
 
     def copy(self, new):
-        new.W1 = copy.deepcopy(self.W1)
-        new.W2 = copy.deepcopy(self.W2)
-        new.W3 = copy.deepcopy(self.W3)
-
-        new.b1 = copy.deepcopy(self.b1)
-        new.b2 = copy.deepcopy(self.b2)
-        new.b3 = copy.deepcopy(self.b3)
-
-        self.network = [self.W1, self.W2, self.W3, self.b1, self.b2, self.b3]
+        new.network = copy.deepcopy(self.network)
         
 
 class Generation:
@@ -148,18 +138,15 @@ class Generation:
             
             self.new_instance[count].copy(tmp1)
             self.new_instance[count + 1].copy(tmp2)
-            tmp1.print_network()
             
             for i in range(2):
-                index = random.randrange(0, len(tmp1.network))
-                x = tmp1.network[index]
-                y = tmp2.network[index]
-
-                tmp1.network[index] = copy.deepcopy(y)
-                tmp2.network[index] = copy.deepcopy(x)
+                key = random.choice(list(tmp1.network.keys()))
+                z = tmp1.network[key]
+                tmp1.network[key] = tmp2.network[key]
+                tmp2.network[key] = z
                 
             count += 2
-            tmp1.print_network()
+            
             self.new_instance.append(tmp1)
             self.new_instance.append(tmp2)
 
@@ -168,11 +155,12 @@ class Generation:
         for i in range(int(self.num * 0.4)):
             tmp = Instance()
             self.new_instance[count].copy(tmp)
-            
+            tmp.print_network()
             for i in range(2):
-                index = random.randrange(0, len(tmp.network))
-                x = tmp.network[index]
+                key = random.choice(list(tmp.network.keys()))
+                x = tmp.network[key]
                 np_rand(x, x.shape[0], x.shape[1])
+            tmp.print_network()
             self.new_instance.append(tmp)
             
     def new_generation(self):
