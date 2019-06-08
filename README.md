@@ -1,4 +1,6 @@
 # Dino Game AI
+![image](https://user-images.githubusercontent.com/48395704/59141293-04a5c680-89e5-11e9-9095-9886cf104f27.png)
+
 A simple artificial intelligence in pygame dinosaur, using Neural Networks and Genetic Algorithm. 
 
 ## Instructions 
