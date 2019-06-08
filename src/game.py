@@ -20,7 +20,7 @@ black = (0,0,0)
 white = (255,255,255)
 background_col = (235,235,235)
 
-G_NUM = 10
+G_NUM = 50
 JUMP = 0
 DUCK_DOWN = 1
 DUCK_UP = 2
@@ -346,6 +346,7 @@ try:
         g.load_data(data)
         
 except Exception as e:
+    print()
     print("Create new save file")
 
 def gameplay():
@@ -546,7 +547,6 @@ def gameplay():
             clock.tick(FPS)
 
     pygame.quit()
-    quit()
 
 def main():
     print()

@@ -32,12 +32,7 @@ class Instance:
         # TODO : find the appropriate number of nodes
         self.network = {}
 
-        W1 = np.zeros((4, 4))
-        np_rand(W1, 4, 4)
-        b1 = np.zeros((1, 4))
-        np_rand(b1, 1, 4)
-        
-        '''W1 = np.zeros((4, 3))
+        W1 = np.zeros((4, 3))
         W2 = np.zeros((3, 3))
         W3 = np.zeros((3 ,4))
         np_rand(W1, 4, 3)
@@ -56,10 +51,7 @@ class Instance:
         self.network['W3'] = W3
         self.network['b1'] = b1
         self.network['b2'] = b2
-        self.network['b3'] = b3'''
-        
-        self.network['W1'] = W1
-        self.network['b1'] = b1
+        self.network['b3'] = b3
         
 
     def get_enemy_pos(self, cacti, ptreas):
@@ -83,15 +75,12 @@ class Instance:
     def forward(self, c, p):
         self.get_enemy_pos(c, p)
 
-        '''a1 = np.dot(self.X, self.network['W1']) + self.network['b1']
+        a1 = np.dot(self.X, self.network['W1']) + self.network['b1']
         z1 = ReLU(a1)
         a2 = np.dot(z1, self.network['W2']) + self.network['b2']
         z2 = ReLU(a2)
         a3 = np.dot(z2, self.network['W3']) + self.network['b3']
-        y = identity_function(a3)'''
-
-        a1 = np.dot(self.X, self.network['W1']) + self.network['b1']
-        y = identity_function(a1)
+        y = identity_function(a3)
 
         self.action = np.argmax(y)
 
