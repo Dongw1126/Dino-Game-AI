@@ -4,6 +4,7 @@
 A simple artificial intelligence in pygame dinosaur, using Neural Networks and Genetic Algorithm. 
 
 ## Instructions 
+Execute <code>main.py</code>
 Press <code>space</code> to start Learning  
 If you press <code>space</code> again, it stops  
     
