@@ -25,33 +25,27 @@ class Instance:
     def __init__(self):
         self.dino = Dino(44,47)
         self.init_network()
-        self.X = np.array([1.0, 1.0, 1.0, 1.0])
+        self.X = np.array([1.0, 1.0, 1.0])
         self.action = 3
 
     def init_network(self):
         # TODO : find the appropriate number of nodes
         self.network = {}
 
-        W1 = np.zeros((4, 3))
+        W1 = np.zeros((3, 3))
         W2 = np.zeros((3, 3))
-        W3 = np.zeros((3 ,4))
-        np_rand(W1, 4, 3)
+        np_rand(W1, 3, 3)
         np_rand(W2, 3, 3)
-        np_rand(W3, 3, 4)
 
         b1 = np.zeros((1, 3))
         b2 = np.zeros((1, 3))
-        b3 = np.zeros((1, 4))
         np_rand(b1, 1, 3)
         np_rand(b2, 1, 3)
-        np_rand(b3, 1, 4)
 
         self.network['W1'] = W1
         self.network['W2'] = W2
-        self.network['W3'] = W3
         self.network['b1'] = b1
         self.network['b2'] = b2
-        self.network['b3'] = b3
         
 
     def get_enemy_pos(self, cacti, ptreas):
@@ -65,7 +59,7 @@ class Instance:
             if p.rect.x < front_p.x:
                 front_p = p.rect
                 
-        self.X = np.array([front_c.x, front_c.y, front_p.x, front_p.y])
+        self.X = np.array([front_c.x, front_p.x, front_p.y])
 
     def print_network(self):
         for key in self.network.keys():
@@ -79,8 +73,8 @@ class Instance:
         z1 = ReLU(a1)
         a2 = np.dot(z1, self.network['W2']) + self.network['b2']
         z2 = ReLU(a2)
-        a3 = np.dot(z2, self.network['W3']) + self.network['b3']
-        y = identity_function(a3)
+
+        y = identity_function(z2)
 
         self.action = np.argmax(y)
 
