@@ -49,6 +49,7 @@ class Instance:
         
 
     def get_enemy_pos(self, cacti, ptreas):
+        
         front_c = pg.Rect(600, 100, 40, 40)
         for c in cacti:
             if c.rect.x < front_c.x:
