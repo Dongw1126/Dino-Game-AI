@@ -89,6 +89,8 @@ class Generation:
         self.instance = []
         self.gene_score = [0]
         self.create_instance()
+        f = open('output.txt','w')
+        f.close()
     
     def create_instance(self):
         for i in range(self.num):
@@ -112,6 +114,9 @@ class Generation:
         print("\t\tBest record "+ str(max(self.gene_score)))
         print("============================================")
         print()
+        f = open('output.txt','a')
+        data = str(self.generation) + " " + str(max(self.gene_score)) + "\n"
+        f.write(data)
 
     def selection(self):
         for i in range(int(self.num * 0.4)):
