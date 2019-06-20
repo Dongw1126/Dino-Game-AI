@@ -438,7 +438,7 @@ def gameplay():
                     if pygame.sprite.collide_mask(g.instance[i].dino,p):
                         g.instance[i].dino.isDead = True
 
-            if len(cacti) < 2:
+            if len(cacti) < 1:
                 if len(cacti) == 0:
                     last_obstacle.empty()
                     last_obstacle.add(Cactus(gamespeed,40,40))
@@ -448,7 +448,12 @@ def gameplay():
                             last_obstacle.empty()
                             last_obstacle.add(Cactus(gamespeed, 40, 40))
 
-            if len(pteras) == 0 and random.randrange(0,200) == 10 and counter > 500:
+            '''if len(pteras) == 0 and random.randrange(0,200) == 10 and counter > 500:
+                for l in last_obstacle:
+                    if l.rect.right < width*0.8:
+                        last_obstacle.empty()
+                        last_obstacle.add(Ptera(gamespeed, 46, 40))'''
+            if len(pteras) < 2:
                 for l in last_obstacle:
                     if l.rect.right < width*0.8:
                         last_obstacle.empty()
