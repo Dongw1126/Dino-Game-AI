@@ -49,16 +49,23 @@ class Instance:
         
 
     def get_enemy_pos(self, cacti, ptreas):
-        
+        front_ob = pg.Rect(600, 100, 40, 40)
         front_c = pg.Rect(600, 100, 40, 40)
         for c in cacti:
-            if c.rect.x < front_c.x:
+            if c.rect.x < front_c.x and c.rect.x > 70:
                 front_c = c.rect
 
         front_p = pg.Rect(600, 100, 40, 40)
         for p in ptreas:
-            if p.rect.x < front_p.x:
+            if p.rect.x < front_p.x and p.rect.x > 70:
                 front_p = p.rect
+
+        if front_p.x > front_c.x:
+            front_ob = front_c
+        else:
+            front_ob = front_p
+        
+        #print(front_ob)
                 
         self.X = np.array([front_c.x, front_p.x, front_p.y])
 
