@@ -7,24 +7,17 @@ import os
 import sys
 import pygame
 import random
-import pickle
 from pygame import *
 
 pygame.init()
 
 scr_size = (width,height) = (600,150)
-FPS = 600
+FPS = 60
 gravity = 0.6
 
 black = (0,0,0)
 white = (255,255,255)
 background_col = (235,235,235)
-
-G_NUM = 50
-JUMP = 0
-DUCK_DOWN = 1
-DUCK_UP = 2
-STAY = 3
 
 high_score = 0
 
@@ -336,31 +329,13 @@ def introscreen():
         if temp_dino.isJumping == False and temp_dino.isBlinking == False:
             gameStart = True
 
-# Generation Create
-import ai
-g = ai.Generation(G_NUM)
-
-try:
-    with open("data.pickle", "rb") as r:
-        data = pickle.load(r)
-        g.load_data(data)
-        
-except Exception as e:
-    print()
-    print("Create new save file")
-
 def gameplay():
-    import ai
     global high_score
-    global g
-
-    learning = True
-
     gamespeed = 4
     startMenu = False
     gameOver = False
     gameQuit = False
-    
+    playerDino = Dino(44,47)
     new_ground = Ground(-1*gamespeed)
     scb = Scoreboard()
     highsc = Scoreboard(width*0.78)
@@ -402,43 +377,30 @@ def gameplay():
                         gameQuit = True
                         gameOver = True
 
-                    # Stop Learning
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_SPACE:
-                            learning = False
+                            if playerDino.rect.bottom == int(0.98*height):
+                                playerDino.isJumping = True
+                                playerDino.movement[1] = -1*playerDino.jumpSpeed
 
-                # Generation event
-                for i in range(G_NUM):
-                    if g.instance[i].action == 0:
-                        if g.instance[i].dino.rect.bottom == int(0.98*height):
-                            g.instance[i].dino.isJumping = True
-                            g.instance[i].dino.movement[1] = -1*g.instance[i].dino.jumpSpeed
-                    
-                    elif g.instance[i].action == 1:
-                        if not (g.instance[i].dino.isJumping and g.instance[i].dino.isDead):
-                            g.instance[i].dino.isDucking = True
-                        
-                    elif g.instance[i].action == 2:
-                        g.instance[i].dino.isDucking = False
-                        
-                    elif g.instance[i].action == 3:
-                        pass
-                    else:
-                        pass
-                    
+                        if event.key == pygame.K_DOWN:
+                            if not (playerDino.isJumping and playerDino.isDead):
+                                playerDino.isDucking = True
+
+                    if event.type == pygame.KEYUP:
+                        if event.key == pygame.K_DOWN:
+                            playerDino.isDucking = False
             for c in cacti:
                 c.movement[0] = -1*gamespeed
-                for i in range(G_NUM):
-                    if pygame.sprite.collide_mask(g.instance[i].dino,c):
-                        g.instance[i].dino.isDead = True
+                if pygame.sprite.collide_mask(playerDino,c):
+                    playerDino.isDead = True
 
             for p in pteras:
                 p.movement[0] = -1*gamespeed
-                for i in range(G_NUM):
-                    if pygame.sprite.collide_mask(g.instance[i].dino,p):
-                        g.instance[i].dino.isDead = True
+                if pygame.sprite.collide_mask(playerDino,p):
+                    playerDino.isDead = True
 
-            if len(cacti) < 1:
+            if len(cacti) < 2:
                 if len(cacti) == 0:
                     last_obstacle.empty()
                     last_obstacle.add(Cactus(gamespeed,40,40))
@@ -448,12 +410,7 @@ def gameplay():
                             last_obstacle.empty()
                             last_obstacle.add(Cactus(gamespeed, 40, 40))
 
-            '''if len(pteras) == 0 and random.randrange(0,200) == 10 and counter > 500:
-                for l in last_obstacle:
-                    if l.rect.right < width*0.8:
-                        last_obstacle.empty()
-                        last_obstacle.add(Ptera(gamespeed, 46, 40))'''
-            if len(pteras) < 2:
+            if len(pteras) == 0 and random.randrange(0,200) == 10 and counter > 500:
                 for l in last_obstacle:
                     if l.rect.right < width*0.8:
                         last_obstacle.empty()
@@ -462,20 +419,12 @@ def gameplay():
             if len(clouds) < 5 and random.randrange(0,300) == 10:
                 Cloud(width,random.randrange(height/5,height/2))
 
-            for i in range(G_NUM):
-                g.instance[i].dino.update()
+            playerDino.update()
             cacti.update()
             pteras.update()
             clouds.update()
             new_ground.update()
-
-            # Neural network working
-            for i in range(G_NUM):
-                g.instance[i].forward(cacti, pteras)
-
-            for i in range(G_NUM):
-                if not g.instance[i].dino.isDead:
-                    scb.update(g.instance[i].dino.score)
+            scb.update(playerDino.score)
             highsc.update(high_score)
 
             if pygame.display.get_surface() != None:
@@ -488,27 +437,15 @@ def gameplay():
                     screen.blit(HI_image,HI_rect)
                 cacti.draw(screen)
                 pteras.draw(screen)
-                for i in range(G_NUM):
-                    if not g.instance[i].dino.isDead:
-                        g.instance[i].dino.draw()
+                playerDino.draw()
 
                 pygame.display.update()
             clock.tick(FPS)
 
-            for i in range(G_NUM):
-                if g.instance[i].dino.score > high_score:
-                    high_score = g.instance[i].dino.score
-
-            if g.generation_end():
-                gene = g.generation
-                net = g.get_network_list()
-                data = ai.Data(gene, net)
-
-                with open("data.pickle", "wb") as w:
-                    pickle.dump(data, w)
-                g.new_generation()
-                
+            if playerDino.isDead:
                 gameOver = True
+                if playerDino.score > high_score:
+                    high_score = playerDino.score
 
             if counter%700 == 699:
                 new_ground.speed -= 1
@@ -533,15 +470,10 @@ def gameplay():
                         if event.key == pygame.K_ESCAPE:
                             gameQuit = True
                             gameOver = False
-                            
-                ### Auto Restart
-                if learning:
-                    gameOver = False
-                    gameplay()
-                else:
-                    print("Learning Finished")
-                    pygame.quit()
-                    
+
+                        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                            gameOver = False
+                            gameplay()
             highsc.update(high_score)
             if pygame.display.get_surface() != None:
                 disp_gameOver_msg(retbutton_image,gameover_image)
@@ -552,17 +484,11 @@ def gameplay():
             clock.tick(FPS)
 
     pygame.quit()
+    quit()
 
 def main():
-    print()
-    print("============================================")
-    print("\tPress Space to Learning")
-    print("If you press space again, it stops")
-    print("============================================")
-    print()
-    
     isGameQuit = introscreen()
     if not isGameQuit:
         gameplay()
 
-#main()
+main()
