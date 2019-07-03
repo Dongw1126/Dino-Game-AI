@@ -86,8 +86,11 @@ class Generation:
         self.generation = 1
         self.num = n
         self.instance = []
+        self.prev_high = 0
+        self.T = 100
         self.gene_score = [0]
         self.create_instance()
+        
         f = open('output.txt','w')
         f.close()
     
@@ -113,12 +116,16 @@ class Generation:
         print("\t\tBest record "+ str(max(self.gene_score)))
         print("============================================")
         print()
+        if self.prev_high < max(self.gene_score):
+            self.T -= 1
+            self.prev_high = max(self.gene_score)
+
         f = open('output.txt','a')
         data = str(self.generation) + " " + str(max(self.gene_score)) + "\n"
         f.write(data)
 
     def selection(self):
-        for i in range(int(self.num * 0.4)):
+        for i in range(int(self.num * 0.2)):
             index = self.gene_score.index(max(self.gene_score))
             tmp = Instance()
             self.instance[index].copy(tmp)
@@ -149,11 +156,11 @@ class Generation:
 
     def mutation(self):
         count = 0
-        for i in range(int(self.num * 0.4)):
+        for i in range(int(self.num * 0.6)):
             tmp = Instance()
             self.new_instance[count].copy(tmp)
             
-            for i in range(1):
+            for i in range(self.T):
                 key = random.choice(list(tmp.network.keys()))
                 target = tmp.network[key]
                 x = random.randrange(0, target.shape[0])
@@ -188,14 +195,3 @@ class Generation:
             tmp = Instance()
             tmp.network = data.data[i]
             self.instance.append(tmp)
-
-
-class Data:
-    def __init__(self, g, data):
-        self.g = g
-        self.data = data
-        
-    
-            
-            
-        

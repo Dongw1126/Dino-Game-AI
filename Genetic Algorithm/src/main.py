@@ -6,6 +6,6 @@ game.main()
 '''
 
 ## TODO ##
-optimize genetic algorithm (change hidden layer??)
-Change Input value -> nearest obstacle
+optimize genetic algorithm
+premature convergence problem -> SA(Simulated Annealing)?
 '''

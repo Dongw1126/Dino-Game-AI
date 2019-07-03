@@ -207,8 +207,10 @@ class Ptera(pygame.sprite.Sprite):
     def __init__(self,speed=5,sizex=-1,sizey=-1):
         pygame.sprite.Sprite.__init__(self,self.containers)
         self.images,self.rect = load_sprite_sheet('ptera.png',2,1,sizex,sizey,-1)
-        self.ptera_height = [height*0.82,height*0.75,height*0.60]
-        self.rect.centery = self.ptera_height[random.randrange(0,3)]
+        #self.ptera_height = [height*0.82,height*0.75,height*0.60]
+        self.ptera_height = [height*0.82,height*0.60]
+        #self.rect.centery = self.ptera_height[random.randrange(0,3)]
+        self.rect.centery = self.ptera_height[random.randrange(0,2)]
         self.rect.left = width + self.rect.width
         self.image = self.images[0]
         self.movement = [-1*speed,0]
@@ -438,7 +440,7 @@ def gameplay():
                     if pygame.sprite.collide_mask(g.instance[i].dino,p):
                         g.instance[i].dino.isDead = True
 
-            if len(cacti) < 2:
+            if len(cacti) < 1:
                 if len(cacti) == 0:
                     last_obstacle.empty()
                     last_obstacle.add(Cactus(gamespeed,40,40))
@@ -448,16 +450,16 @@ def gameplay():
                             last_obstacle.empty()
                             last_obstacle.add(Cactus(gamespeed, 40, 40))
 
-            if len(pteras) == 0 and random.randrange(0,200) == 10 and counter > 500:
-                for l in last_obstacle:
-                    if l.rect.right < width*0.8:
-                        last_obstacle.empty()
-                        last_obstacle.add(Ptera(gamespeed, 46, 40))
-            '''if len(pteras) < 2:
+            '''if len(pteras) == 0 and random.randrange(0,200) == 10 and counter > 500:
                 for l in last_obstacle:
                     if l.rect.right < width*0.8:
                         last_obstacle.empty()
                         last_obstacle.add(Ptera(gamespeed, 46, 40))'''
+            if len(pteras) < 1 and counter > 250:
+                for l in last_obstacle:
+                    if l.rect.right < width*0.8:
+                        last_obstacle.empty()
+                        last_obstacle.add(Ptera(gamespeed, 46, 40))
 
             if len(clouds) < 5 and random.randrange(0,300) == 10:
                 Cloud(width,random.randrange(height/5,height/2))
