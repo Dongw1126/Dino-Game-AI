@@ -117,7 +117,8 @@ class Generation:
         print("============================================")
         print()
         if self.prev_high < max(self.gene_score):
-            self.T -= 1
+            if self.T > 1:
+                self.T -= 1
             self.prev_high = max(self.gene_score)
 
         f = open('output.txt','a')
@@ -130,7 +131,7 @@ class Generation:
             tmp = Instance()
             self.instance[index].copy(tmp)
             self.new_instance.append(tmp)
-            
+
             del self.instance[index]
             del self.gene_score[index]
 
@@ -155,7 +156,7 @@ class Generation:
             self.new_instance.append(tmp2)
 
     def mutation(self):
-        count = 0
+        '''count = 0
         for i in range(int(self.num * 0.6)):
             tmp = Instance()
             self.new_instance[count].copy(tmp)
@@ -168,6 +169,17 @@ class Generation:
 
                 target[x][y] = rand()
                 
+            self.new_instance.append(tmp)
+            count += 1'''
+        count = 0
+        alpha = 0.1
+        for i in range(int(self.num * 0.6)):
+            tmp = Instance()
+            self.new_instance[count].copy(tmp)
+            
+            for k, v in tmp.network.items():
+                 tmp.network[k] = tmp.network[k] + random.uniform(-self.T*alpha, self.T*alpha)
+
             self.new_instance.append(tmp)
             count += 1
             
@@ -195,3 +207,9 @@ class Generation:
             tmp = Instance()
             tmp.network = data.data[i]
             self.instance.append(tmp)
+
+
+class Data:
+    def __init__(self, g, data):
+        self.g = g
+        self.data = data
