@@ -156,7 +156,7 @@ class Generation:
             self.new_instance.append(tmp2)
 
     def mutation(self):
-        '''count = 0
+        count = 0
         for i in range(int(self.num * 0.6)):
             tmp = Instance()
             self.new_instance[count].copy(tmp)
@@ -169,17 +169,6 @@ class Generation:
 
                 target[x][y] = rand()
                 
-            self.new_instance.append(tmp)
-            count += 1'''
-        count = 0
-        alpha = 0.1
-        for i in range(int(self.num * 0.6)):
-            tmp = Instance()
-            self.new_instance[count].copy(tmp)
-            
-            for k, v in tmp.network.items():
-                 tmp.network[k] = tmp.network[k] + random.uniform(-self.T*alpha, self.T*alpha)
-
             self.new_instance.append(tmp)
             count += 1
             
