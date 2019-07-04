@@ -437,9 +437,10 @@ def gameplay():
                 for i in range(G_NUM):
                     if pygame.sprite.collide_mask(g.instance[i].dino,p):
                         g.instance[i].dino.isDead = True
-
-            if g.instance[i].dino.score > 2000:
-                g.instance[i].dino.isDead = True
+                        
+            for i in range(G_NUM):
+                if g.instance[i].dino.score > 2000:
+                    g.instance[i].dino.isDead = True
 
             if len(cacti) < 2:
                 if len(cacti) == 0:
