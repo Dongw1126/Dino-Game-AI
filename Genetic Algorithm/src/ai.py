@@ -6,9 +6,8 @@ import pickle
 from game import Dino
 
 RAND_INIT = 5
-
 def rand():
-    return random.uniform(-RAND_INIT, RAND_INIT)
+    return random.uniform(0, RAND_INIT)
 
 def np_rand(arr, row ,col):
     for i in range(row):
@@ -25,27 +24,21 @@ class Instance:
     def __init__(self):
         self.dino = Dino(44,47)
         self.init_network()
-        self.X = np.array([1.0, 1.0, 1.0])
+        self.X = np.array([1.0, 1.0])
         self.action = 3
 
     def init_network(self):
         # TODO : find the appropriate number of nodes
         self.network = {}
 
-        W1 = np.zeros((3, 3))
-        W2 = np.zeros((3, 3))
-        np_rand(W1, 3, 3)
-        np_rand(W2, 3, 3)
+        W1 = np.zeros((2, 3))
+        np_rand(W1, 2, 3)
 
         b1 = np.zeros((1, 3))
-        b2 = np.zeros((1, 3))
         np_rand(b1, 1, 3)
-        np_rand(b2, 1, 3)
 
         self.network['W1'] = W1
-        self.network['W2'] = W2
         self.network['b1'] = b1
-        self.network['b2'] = b2
         
 
     def get_enemy_pos(self, cacti, ptreas):
@@ -67,7 +60,7 @@ class Instance:
         
         #print(front_ob)
                 
-        self.X = np.array([front_c.x, front_p.x, front_p.y])
+        self.X = np.array([front_ob.x, front_ob.y])
 
     def print_network(self):
         for key in self.network.keys():
@@ -79,11 +72,9 @@ class Instance:
 
         a1 = np.dot(self.X, self.network['W1']) + self.network['b1']
         z1 = ReLU(a1)
-        a2 = np.dot(z1, self.network['W2']) + self.network['b2']
-        z2 = ReLU(a2)
-
-        y = identity_function(z2)
-
+        
+        y = z1
+        
         self.action = np.argmax(y)
 
     def copy(self, new):
@@ -95,8 +86,11 @@ class Generation:
         self.generation = 1
         self.num = n
         self.instance = []
+        self.prev_high = 0
+        self.T = 100
         self.gene_score = [0]
         self.create_instance()
+        
         f = open('output.txt','w')
         f.close()
     
@@ -122,17 +116,22 @@ class Generation:
         print("\t\tBest record "+ str(max(self.gene_score)))
         print("============================================")
         print()
+        if self.prev_high < max(self.gene_score):
+            if self.T > 1:
+                self.T -= 1
+            self.prev_high = max(self.gene_score)
+
         f = open('output.txt','a')
         data = str(self.generation) + " " + str(max(self.gene_score)) + "\n"
         f.write(data)
 
     def selection(self):
-        for i in range(int(self.num * 0.4)):
+        for i in range(int(self.num * 0.2)):
             index = self.gene_score.index(max(self.gene_score))
             tmp = Instance()
             self.instance[index].copy(tmp)
             self.new_instance.append(tmp)
-            
+
             del self.instance[index]
             del self.gene_score[index]
 
@@ -158,16 +157,20 @@ class Generation:
 
     def mutation(self):
         count = 0
-        for i in range(int(self.num * 0.4)):
+        for i in range(int(self.num * 0.6)):
             tmp = Instance()
             self.new_instance[count].copy(tmp)
             
-            for i in range(2):
+            for i in range(self.T):
                 key = random.choice(list(tmp.network.keys()))
-                x = tmp.network[key]
-                np_rand(x, x.shape[0], x.shape[1])
+                target = tmp.network[key]
+                x = random.randrange(0, target.shape[0])
+                y = random.randrange(0, target.shape[1])
+
+                target[x][y] = rand()
                 
             self.new_instance.append(tmp)
+            count += 1
             
     def new_generation(self):
         self.save_score()
@@ -199,8 +202,3 @@ class Data:
     def __init__(self, g, data):
         self.g = g
         self.data = data
-        
-    
-            
-            
-        
