@@ -4,6 +4,11 @@
 A simple artificial intelligence in pygame dinosaur, using Neural Networks and Genetic Algorithm. 
 
 ## Instructions 
+### Requirements   
+- Python 3+
+- pygame
+- numpy
+
 ### Genetic Algorithm  
 Execute <code>Dino_Game_AI/Genetic Algorithm/src/main.py</code> 
    
