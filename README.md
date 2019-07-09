@@ -9,7 +9,7 @@ A simple artificial intelligence in pygame dinosaur, using Neural Networks and G
 - pygame
 - numpy
 
-### Genetic Algorithm  
+### Learning  
 Execute <code>Dino_Game_AI/Genetic Algorithm/src/main.py</code> 
    
 Press <code>space</code> to start Learning  
