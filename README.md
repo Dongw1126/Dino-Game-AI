@@ -13,8 +13,5 @@ If you press <code>space</code> again, it stops
 Neural Network data is saved in <code>data.pickle</code> file  
 Save/Load is fully automatic  
 
-### Deep Q Network   
-Implementing...
-  
 #### Original game source   
 https://code-projects.org/dino-game-in-python-with-source-code/
