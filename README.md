@@ -3,7 +3,7 @@
 
 A simple artificial intelligence in pygame dinosaur, using Neural Networks and Genetic Algorithm. 
 
-## Instructions 
+# Instructions 
 ### Requirements   
 - Python 3+
 - pygame
