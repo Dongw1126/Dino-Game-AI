@@ -13,7 +13,7 @@ A simple artificial intelligence in pygame dinosaur, using Neural Networks and G
 Execute <code>Dino_Game_AI/Genetic Algorithm/src/main.py</code> 
    
 Press <code>space</code> to start Learning  
-If you press <code>space</code> and the generation ends, the game ends   
+If you press <code>space</code>  and the generation ends, the game ends   
     
 Neural Network data is saved in <code>data.pickle</code> file  
 Save/Load is fully automatic  
