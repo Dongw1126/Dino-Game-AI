@@ -16,7 +16,7 @@ Press <code>space</code> to start Learning
 If you press <code>space</code>  and the generation ends, this program stops
     
 Neural Network data is saved in <code>data.pickle</code> file  
-Save/Load is fully automatic  
+Save/Load is automatic  
 
 #### Original game source   
 https://code-projects.org/dino-game-in-python-with-source-code/
